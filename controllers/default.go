@@ -1,0 +1,155 @@
+package controllers
+
+import (
+	"fmt"
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
+	"news/models"
+	"path"
+	"time"
+)
+
+type MainController struct {
+	beego.Controller
+}
+
+func (c *MainController) Get() {
+//	c.Data["Website"] = "beego.me"
+	//c.Data["Email"] = "astaxie@gmail.com"
+	c.TplName = "register.html"
+}
+
+
+func (c *MainController) Post() {
+//1.拿到数据
+userName := c.GetString("name")
+    pwd  := c.GetString("pwd")
+
+//2.校验数据
+if userName  == ""|| pwd == ""  {
+	beego.Info("数据不能为空")
+	c.Redirect("/reg", 302)
+	//return
+}
+//3.插入数据库
+     o := orm.NewOrm()
+     user := models.User{}
+     user.Name = userName
+     user.Pwd = pwd
+
+     _,err := o.Insert(&user)
+     if err != nil {
+		 beego.Info("插入数据失败")
+		 c.Redirect("/reg", 302)
+		 return
+	 }
+    // c.Ctx.WriteString("插入成功")******************************************
+	c.Redirect("/login.html", 302)
+
+
+}
+
+/*
+登录方法
+ */
+ //登录get 方法
+func (c *MainController) ShowLogin() {
+c.TplName = "login.html"
+}
+//登录post方法
+func (c *MainController) HandleLogin() {
+	//1.拿到数据
+	userName := c.GetString("username")
+	pwd   := c.GetString("pwd")
+	//2.判断数据
+	if userName == "" || pwd == "" {
+		beego.Info("输入数据不合法，请从新输入")
+		c.TplName = "login.html"
+		return
+	}
+	//3.插入数据库
+	o := orm.NewOrm()
+	user := models.User{}
+	user.Name = userName
+	user.Pwd = pwd
+
+
+	err := o.Read(&user,"Name","pwd")
+	if err != nil {
+		beego.Info("查询失败")
+		c.Redirect("/reg", 302)
+		return
+	}
+
+//	c.Ctx.WriteString("登录成功")
+	c.Redirect("/index", 302)
+}
+///显示列表功能
+func (c *MainController) ShowIndex() {
+	//orm 查询
+	o :=orm.NewOrm()
+	var articles []models.Article
+	_,err :=o.QueryTable("Article").All(&articles)
+	if err != nil{
+		beego.Info("查询文章出错")
+		return
+	}
+	c.Data["articles"]= articles
+	c.TplName = "index.html"
+}
+
+//文章的添加"get:ShowAdd;post:HandleAdd"
+func (c *MainController) ShowAdd() {
+	c.TplName = "add.html"
+	}
+
+func (c *MainController) HandleAdd() {
+	//1.拿到数据
+	artiName :=c.GetString("articleName")
+	artiContent := c.GetString("content")
+
+	//文件上传功能
+	f,h,err := c.GetFile("uploadname")
+	defer f.Close()
+
+	//1.限定格式 png jpg
+	fileext := path.Ext(h.Filename)//去除后缀
+	beego.Info(fileext)
+	if fileext != ".jpg" &&fileext != ".png"{
+		beego.Info("上传文件格式错误")
+		return
+	}
+	//限制大小
+	if h.Size > 40000000{
+		beego.Info("上传文件过大")
+		return
+	}
+	//对文件重新命名 防止重复
+	filename := time.Now().Format("2006-01-02")+fileext//6-1-2 3:4:5
+	if err != nil{
+		beego.Info("上传失败")
+		fmt.Println("getfile err",err)
+	}else{
+		c.SaveToFile("uploadname","./static/img"+filename)
+	}
+	if artiName == "" || artiContent == ""{
+		beego.Info("添加文章数据错误")
+		return
+	}
+	//c.Ctx.WriteString("添加文章成功")
+     //插入数据库
+     o := orm.NewOrm()
+     arti := models.Article{}
+     arti.ArtiName = artiName
+     arti.Acontent = artiContent
+     arti.Aimg = "static/img/"+filename
+
+     _,err = o.Insert(&arti)
+     if err != nil{
+     	beego.Info("插入数据失败")
+		 return
+	 }
+    // c.Ctx.WriteString("插入数据成功")
+	c.Redirect("/index", 302)
+
+}
