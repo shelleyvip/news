@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"news/models"
-	"fmt"
 	"path"
 	"time"
 )
@@ -88,13 +88,24 @@ func (c *MainController) HandleLogin() {
 func (c *MainController) ShowIndex()  {
 	//orm 查询
 	o := orm.NewOrm()
-
+	qs := o.QueryTable("Article")
 	var articles []models.Article
-	_,err :=o.QueryTable("Article").All(&articles)
+	_,err :=qs.All(&articles)
 	if err != nil{
 		beego.Info("查询所有文章出错")
 		return
+
 	}
+	count,err := qs.Count()
+	if err != nil{
+		beego.Info("查询错误")
+		return
+	}
+
+
+
+
+	c.Data["count"] = count
 	c.Data["articles"] =articles
 	c.TplName = "index.html"
 }
