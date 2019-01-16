@@ -295,7 +295,8 @@ func (c *MainController)HandelDelete(){
 	}
 	o.Delete(&arti)
 	c.Redirect("/index",302)
-
+///////
+//
 }
 
 
