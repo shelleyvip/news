@@ -40,10 +40,10 @@
                     <th width="70%">类别名称</th>
                     <th width="20%">管理操作</th>
                 </tr>
-                {{range .articleType}}
+                {{range  $index, $elem := .articleType}}
                 <tr>
-                    <td>{{.Id}}</td>
-                    <td>{{.Tname}}</td>
+                    <td>{{$index | addone}}</td>
+                    <td>{{$elem.Tname}}</td>
                     <td><a href="javascript:;" class="edit">删除</a><a href="javascript:;" class="edit">编辑</a></td>
                 </tr>
                 {{end}}

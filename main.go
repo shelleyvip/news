@@ -10,9 +10,11 @@ func main() {
 	//beego.AddFuncMap("hi",hello)
 	beego.AddFuncMap("showprepage",prepage)
 	beego.AddFuncMap("shownextpage",shownextpage)
+	beego.AddFuncMap("addone",showNewAddone)
 
 	beego.Run()
 }
+
 
 //试图函数，获取上一页页码
 
@@ -31,4 +33,9 @@ func prepage(pageindex int)(preIndex int){
 func shownextpage(pageindex int)(nextIndex int){
 	nextIndex = pageindex + 1
 	return
+}
+func showNewAddone(num int)(newNum int)  {
+	newNum = num + 1
+	return
+	
 }

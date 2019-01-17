@@ -308,10 +308,31 @@ func (c *MainController)ShowAddType()  {
 	c .TplName = "addType.html"
 
 }
+//显示添加类型页面
 func (c *MainController)HandleAddType()  {
 	//c.TplName = "addType.html"
+	//1。获取内容
+	typeName := c.GetString("typeName")
+	//2。判断数据是否合法
+	if typeName == ""{
+		beego.Info("获取信息错误")
+		return
+	}
+	//3。写入数据
+	o := orm.NewOrm()
+	artiType := models.ArticleType{}
+	artiType.Tname = typeName
+	_,err := o.Insert(&artiType)
+	if err != nil{
+		beego.Info("插入数据类型错误")
+		return
+	}
+	//4.返回界面
+	c.Redirect("/addType",302)
+
 
 }
+
 
 
 
