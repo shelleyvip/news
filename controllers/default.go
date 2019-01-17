@@ -295,8 +295,22 @@ func (c *MainController)HandelDelete(){
 	}
 	o.Delete(&arti)
 	c.Redirect("/index",302)
-///////
-//
+}
+//显示添加页面
+func (c *MainController)ShowAddType()  {
+	o := orm.NewOrm()
+	var artiTypes []models.ArticleType
+	_,err := o.QueryTable("ArticleType").All(&artiTypes)
+	if err != nil{
+		beego.Info("没有获取到类型数据")
+	}
+	c.Data["articleType"] = artiTypes
+	c .TplName = "addType.html"
+
+}
+func (c *MainController)HandleAddType()  {
+	//c.TplName = "addType.html"
+
 }
 
 
