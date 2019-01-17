@@ -47,9 +47,9 @@
     <div class="pannel">
         <span class="sel_label">请选择文章分类：</span>
         <select name="select" id="select" class="sel_opt">
-            <option selected="true">财经新闻</option>
-            <option>体育新闻</option>
-            <option>科技新闻</option>
+            {{range .articleType}}
+                <option selected="true">{{.Tname}}</option>
+             {{end}}
         </select>
 
         <table class="common_table">

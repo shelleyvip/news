@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"math"
 	"news/models"
 	"path"
 	"time"
@@ -96,15 +97,44 @@ func (c *MainController) ShowIndex()  {
 		return
 
 	}
+	//查询有多个数据
 	count,err := qs.Count()
 	if err != nil{
 		beego.Info("查询错误")
 		return
 	}
+	//每页显示多少个
+	pageSize := 2
+	pageCount := math.Ceil(float64(count)/float64(pageSize))
+	//首页和末页
+	pageIndex,err := c.GetInt("pageIndex")
+	if err != nil{
+		pageIndex = 1
+	}
+	start := pageSize*(pageIndex-1)
+	//1.参数pagesize 一页显示多少 2start 起始位置
+	qs.Limit(pageSize,start).All(&articles)
+	//判断首页是否=1和末页是否=pageCount
+	FirstPage := false
+	if pageIndex == 1{
+		FirstPage = true
+	}
 
-
-
-
+	LastPage := false
+	if pageIndex == int(pageCount){
+		LastPage = true
+	}
+	//获取类型数据
+	var artiTypes []models.ArticleType
+	_,err = o.QueryTable("ArticleType").All(&artiTypes)
+	if err != nil{
+		beego.Info("获取类型错误")
+		return
+	}
+	c.Data["articleType"] = artiTypes
+    c.Data["FirstPage"] = FirstPage
+    c.Data["LastPage"] = LastPage
+    c.Data["pageIndex"] = pageIndex
 	c.Data["count"] = count
 	c.Data["articles"] =articles
 	c.TplName = "index.html"
