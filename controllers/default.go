@@ -89,7 +89,7 @@ func (c *MainController) ShowIndex()  {
 	//orm 查询
 	o := orm.NewOrm()
 	id,_ := c.GetInt("select")
-
+    beego.Info("id=",id)
 	qs := o.QueryTable("Article")
 	var articles []models.Article
 	//_,err :=qs.All(&articles)
@@ -99,7 +99,12 @@ func (c *MainController) ShowIndex()  {
 	//
 	//}
 	//查询有多个数据
+	var count int64
 	count,err := qs.Count()
+	if id != 0 && id != 2 {
+		count, err = qs.Filter("ArticleType__Id", id).Count()
+	}
+	//
 	if err != nil{
 		beego.Info("查询错误")
 		return
@@ -115,7 +120,13 @@ func (c *MainController) ShowIndex()  {
 	start := pageSize*(pageIndex-1)
 	//1.参数pagesize 一页显示多少 2start 起始位置
 	//select *from article where ArticleType__Id = id limit
-	qs.Limit(pageSize,start).Filter("ArticleType__Id",id).All(&articles) //Filter 相当于sql里面的where
+
+	//
+	if id == 0 || id == 2{
+		qs.Limit(pageSize,start).RelatedSel("ArticleType").All(&articles)//默认为0查询所有文章
+	}else {
+		qs.Limit(pageSize,start).RelatedSel("ArticleType").Filter("ArticleType__Id",id).All(&articles)//Filter 相当于sql里面的where
+	}
 	//判断首页是否=1和末页是否=pageCount
 	FirstPage := false
 	if pageIndex == 1{
