@@ -55,9 +55,7 @@ func (c *MainController) ShowLogin() {
 	if userName != ""{
 		c.Data["userName"] = userName
 		c.Data["checked"] = "checked"
-	}else {
-         c.Data["userName"] = ""
-	}
+	} 
 	c.TplName = "login.html"
 	//c.Ctx.SetCookie("key","value",time)
 	//c.Ctx.GetCookie("key")
@@ -98,6 +96,9 @@ func (c *MainController) HandleLogin() {
 	}else {
 		c.Ctx.SetCookie("userName",userName,-1)
 	}
+	c.SetSession("userName",userName)
+
+
 	// c.Ctx.WriteString("登录成功")
 	c.Redirect("/index",302)
 
@@ -106,6 +107,11 @@ func (c *MainController) HandleLogin() {
 
 //显示列表功能
 func (c *MainController) ShowIndex()  {
+	userName := c.GetSession("userName")
+	if userName == nil{
+		c.Redirect("/login",302)
+		return
+	}
 	//orm 查询
 	o := orm.NewOrm()
 	id,_ := c.GetInt("select")
