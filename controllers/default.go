@@ -88,6 +88,7 @@ func (c *MainController) HandleLogin() {
 func (c *MainController) ShowIndex()  {
 	//orm 查询
 	o := orm.NewOrm()
+	id,_ := c.GetInt("select")
 	qs := o.QueryTable("Article")
 	var articles []models.Article
 	//_,err :=qs.All(&articles)
@@ -137,6 +138,8 @@ func (c *MainController) ShowIndex()  {
     c.Data["pageCount"] = pageCount
 	c.Data["count"] = count
 	c.Data["articles"] =articles
+	//文章Id
+	c.Data["typeid"] = id              ///////<---------
 	c.TplName = "index.html"
 }
 

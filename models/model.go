@@ -12,7 +12,7 @@ type User struct {
 	Pwd string
 	//Age string
 
-	Article[]*Article `orm:"rel(m2m)"`//设置多对多
+	//Article[]*Article `orm:"rel(m2m)"`//设置多对多
 }
 
 type Article struct {
@@ -25,7 +25,7 @@ type Article struct {
 	// n 记住1的一方
 	ArticleType *ArticleType `orm:"rel(fk)"` //设置一对多的关系
 
-	User[]*User `orm:"reverse(many)"` //设置多对多反向关系
+	//User[]*User `orm:"reverse(many)"` //设置多对多反向关系
 
 }
 //类型表
