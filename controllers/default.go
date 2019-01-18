@@ -55,7 +55,7 @@ func (c *MainController) ShowLogin() {
 	if userName != ""{
 		c.Data["userName"] = userName
 		c.Data["checked"] = "checked"
-	} 
+	}
 	c.TplName = "login.html"
 	//c.Ctx.SetCookie("key","value",time)
 	//c.Ctx.GetCookie("key")
@@ -392,6 +392,7 @@ func (c *MainController)ShowAddType()  {
 	var artiTypes []models.ArticleType
 	_,err := o.QueryTable("ArticleType").All(&artiTypes)
 	if err != nil{
+		//sessionon = true
 		beego.Info("没有获取到类型数据")
 		return
 	}
@@ -421,8 +422,13 @@ func (c *MainController)HandleAddType()  {
 	//4.返回界面
 	c.Redirect("/addType",302)
 
-
 }
+//退出功能
+func (c *MainController) LogOut(){
+	c.DelSession("userName")
+	c.Redirect("/login",302)
+}
+
 
 
 
