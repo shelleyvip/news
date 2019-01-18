@@ -68,7 +68,6 @@ func (c *MainController) HandleLogin() {
 		return
 	}
 	//3.查询账户和密码是否正确
-
 	o :=orm.NewOrm()
 	user := models.User{}
 	user.Name = userName
@@ -91,12 +90,12 @@ func (c *MainController) ShowIndex()  {
 	o := orm.NewOrm()
 	qs := o.QueryTable("Article")
 	var articles []models.Article
-	_,err :=qs.All(&articles)
-	if err != nil{
-		beego.Info("查询所有文章出错")
-		return
-
-	}
+	//_,err :=qs.All(&articles)
+	//if err != nil{
+	//	beego.Info("查询所有文章出错")
+	//	return
+	//
+	//}
 	//查询有多个数据
 	count,err := qs.Count()
 	if err != nil{
@@ -135,6 +134,7 @@ func (c *MainController) ShowIndex()  {
     c.Data["FirstPage"] = FirstPage
     c.Data["LastPage"] = LastPage
     c.Data["pageIndex"] = pageIndex
+    c.Data["pageCount"] = pageCount
 	c.Data["count"] = count
 	c.Data["articles"] =articles
 	c.TplName = "index.html"
@@ -142,6 +142,15 @@ func (c *MainController) ShowIndex()  {
 
 //文章添加get:showAdd;post:HandleAdd
 func (c *MainController) ShowAdd() {
+	o := orm.NewOrm()
+	//获取类型数据
+	var artiTypes []models.ArticleType
+	_,err := o.QueryTable("ArticleType").All(&artiTypes)
+	  if err != nil{
+		beego.Info("获取类型错误")
+		return
+	}
+	c.Data["articleType"] =artiTypes
 	c.TplName = "add.html"
 }
 
@@ -250,7 +259,7 @@ func (c *MainController)ShowUpdate()  {
 
 func (c *MainController) HandleUpdate()  {
 	id,_ := c.GetInt("id")
-	artiname:=c.GetString("articleName")
+	artiname := c.GetString("articleName")
 	content := c.GetString("content")
 	f,h,err := c.GetFile("uploadname")
 
@@ -333,6 +342,7 @@ func (c *MainController)ShowAddType()  {
 	_,err := o.QueryTable("ArticleType").All(&artiTypes)
 	if err != nil{
 		beego.Info("没有获取到类型数据")
+		return
 	}
 	c.Data["articleType"] = artiTypes
 	c .TplName = "addType.html"
