@@ -51,7 +51,16 @@ func (c *MainController) Post() {
 登录的get方法
  */
 func (c *MainController) ShowLogin() {
+	userName := c.Ctx.GetCookie("userName")
+	if userName != ""{
+		c.Data["userName"] = userName
+		c.Data["checked"] = "checked"
+	}else {
+         c.Data["userName"] = ""
+	}
 	c.TplName = "login.html"
+	//c.Ctx.SetCookie("key","value",time)
+	//c.Ctx.GetCookie("key")
 }
 
 /**
@@ -60,6 +69,11 @@ func (c *MainController) ShowLogin() {
 func (c *MainController) HandleLogin() {
 	//拿到数据
 	userName := c.GetString("userName")
+	remember := c.GetString("remember")
+	beego.Info("remember is",remember)
+
+
+
 	pwd := c.GetString("pwd")
 	//判断数据是否合法
 	if userName == "" || pwd == ""{
@@ -77,6 +91,12 @@ func (c *MainController) HandleLogin() {
 		beego.Info("查询失败")
 		c.Redirect("/login",302)
 		return
+
+	}
+	if remember == "on" {
+		c.Ctx.SetCookie("userName", userName, 200)
+	}else {
+		c.Ctx.SetCookie("userName",userName,-1)
 	}
 	// c.Ctx.WriteString("登录成功")
 	c.Redirect("/index",302)

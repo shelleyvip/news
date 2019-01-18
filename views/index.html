@@ -92,13 +92,13 @@
             {{if compare .FirstPage true}}
                 <li>上一页</li>
             {{else}}
-            <li><a href="/index?pageIndex={{.pageIndex | showprepage}};">上一页 </a> </li>
+            <li><a href="/index?pageIndex={{.pageIndex | showprepage}}&&select={{.typeid}};">上一页 </a> </li>
             {{end}}
 
             {{if compare .LastPage true}}
                 <li>下一页</li>
             {{else}}
-            <li> <a href="/index?pageIndex={{.pageIndex | shownextpage}};;">下一页</a></li>
+            <li> <a href="/index?pageIndex={{.pageIndex | shownextpage}}&&select={{.typeid}};">下一页</a></li>
             {{end}}
             <li><a href="/index?pageIndex={{.pageCount}}">末页</a></li>
             <li>共{{.count}}条记录/共{{.pageCount}}页/当前{{.pageIndex}}页</li>
