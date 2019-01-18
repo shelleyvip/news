@@ -89,6 +89,7 @@ func (c *MainController) ShowIndex()  {
 	//orm 查询
 	o := orm.NewOrm()
 	id,_ := c.GetInt("select")
+
 	qs := o.QueryTable("Article")
 	var articles []models.Article
 	//_,err :=qs.All(&articles)
@@ -113,7 +114,8 @@ func (c *MainController) ShowIndex()  {
 	}
 	start := pageSize*(pageIndex-1)
 	//1.参数pagesize 一页显示多少 2start 起始位置
-	qs.Limit(pageSize,start).All(&articles)
+	//select *from article where ArticleType__Id = id limit
+	qs.Limit(pageSize,start).Filter("ArticleType__Id",id).All(&articles) //Filter 相当于sql里面的where
 	//判断首页是否=1和末页是否=pageCount
 	FirstPage := false
 	if pageIndex == 1{
@@ -202,6 +204,15 @@ func (c *MainController) HandleAdd(){
 	arti.Acontent = artiContent
 	arti.Aimg = "/static/img/"+filename
 	//c.Ctx.WriteString("添加文章成功")
+///给文章添加类别
+	id,err := c.GetInt("select")
+	if err != nil{
+		beego.Info("插入数据失败")
+		return
+	}
+	artiType := models.ArticleType{Id:id}
+	o.Read(&artiType)
+    arti.ArticleType = &artiType
 
 	_,err = o.Insert(&arti)
 	if err != nil{
