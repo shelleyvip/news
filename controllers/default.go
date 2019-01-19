@@ -100,18 +100,18 @@ func (c *MainController) HandleLogin() {
 
 
 	// c.Ctx.WriteString("登录成功")
-	c.Redirect("/index",302)
+	c.Redirect("/article/index",302)
 
 
 }
 
 //显示列表功能
 func (c *MainController) ShowIndex()  {
-	userName := c.GetSession("userName")
-	if userName == nil{
-		c.Redirect("/login",302)
-		return
-	}
+	//userName := c.GetSession("userName")
+	//if userName == nil{
+	//	c.Redirect("/login",302)
+	//	return
+	//}
 	//orm 查询
 	o := orm.NewOrm()
 	id,_ := c.GetInt("select")
